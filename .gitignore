@@ -1,0 +1,15 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# data
+*.csv
+*.json
+*.joblib
+
+# nltk
+nltk_data/
+
+# visualizations
+visualizations/
