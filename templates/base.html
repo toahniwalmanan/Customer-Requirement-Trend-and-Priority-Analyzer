@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Product Demand Analyzer{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header">
+            <a class="brand" href="{{ home_url }}">
+                <span class="brand-mark">SignalScope</span>
+                <span class="brand-subtitle">Product demand intelligence</span>
+            </a>
+            <nav class="site-nav">
+                <a href="{{ home_url }}">Analyze Product</a>
+                <a href="{{ dashboard_url }}">Dashboard</a>
+            </nav>
+        </header>
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

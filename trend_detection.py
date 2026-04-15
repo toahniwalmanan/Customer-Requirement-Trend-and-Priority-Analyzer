@@ -76,6 +76,11 @@ def analyze_and_save_trends():
     for trend in bigram_trends[:5]:
         print(f"  - Term: {trend['term']}, Frequency: {trend['frequency']}, Sentiment: {trend['sentiment']:.2f}")
 
+def detect_trends():
+    """
+    Backward-compatible entry point used by main.py.
+    """
+    analyze_and_save_trends()
 
 if __name__ == '__main__':
     analyze_and_save_trends()

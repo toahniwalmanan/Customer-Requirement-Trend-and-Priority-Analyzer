@@ -4,6 +4,7 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 import os
+import pandas as pd
 
 # Define and set the NLTK data directory at the module level
 nltk_data_dir = os.path.join(os.getcwd(), "nltk_data")
@@ -18,15 +19,21 @@ def download_nltk_data():
         nltk.data.find('tokenizers/punkt')
     except LookupError:
         print("Downloading 'punkt' tokenizer...")
-        nltk.download('punkt')
+        nltk.download('punkt', download_dir=nltk_data_dir)
 
     try:
         nltk.data.find('corpora/stopwords')
     except LookupError:
         print("Downloading 'stopwords' corpus...")
-        nltk.download('stopwords')
+        nltk.download('stopwords', download_dir=nltk_data_dir)
 
 def preprocess_text(text):
+    if pd.isna(text):
+        return ""
+
+    if not isinstance(text, str):
+        text = str(text)
+
     # Lowercasing
     text = text.lower()
 

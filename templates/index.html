@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Analyze Product | SignalScope{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-copy">
+        <p class="eyebrow">Market-fit estimation for new ideas</p>
+        <h1>Test a product idea against real customer trends.</h1>
+        <p class="hero-text">
+            Enter a product name and a short description. The model compares it with the review trends already discovered in your dataset and estimates how strongly that idea aligns with current demand.
+        </p>
+        <div class="hero-actions">
+            <a class="button button-secondary" href="{{ dashboard_url }}">Open Dashboard</a>
+        </div>
+    </div>
+    <div class="hero-panel">
+        <div class="stat-card">
+            <span class="stat-label">What this page does</span>
+            <strong>Trend-aware product demand scoring</strong>
+            <p>Matches your concept with frequent keywords and pain points extracted from app reviews.</p>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">What you get</span>
+            <strong>Score, prediction, and insight breakdown</strong>
+            <p>Useful for requirement prioritization, feature framing, and product planning discussions.</p>
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <p class="eyebrow">Input</p>
+            <h2>Describe your product</h2>
+        </div>
+    </div>
+    <form method="post" class="analysis-form">
+        <label for="product_name">Product Name</label>
+        <input id="product_name" name="product_name" type="text" placeholder="Example: SmartSleep Coach" value="{{ form_data.product_name }}">
+
+        <label for="product_description">Product Description</label>
+        <textarea id="product_description" name="product_description" rows="7" placeholder="Describe the problem your product solves, the audience, and the main features.">{{ form_data.product_description }}</textarea>
+
+        <button class="button" type="submit">Analyze Demand</button>
+    </form>
+
+    {% if error %}
+    <div class="message error">{{ error }}</div>
+    {% endif %}
+
+    {% if result %}
+    <div class="result-grid">
+        <article class="result-card score-card">
+            <p class="eyebrow">Demand Score</p>
+            <span class="score-badge score-badge-{{ 'high' if result.demand_score >= 7 else 'medium' if result.demand_score >= 4 else 'low' }}">
+                {{ 'High Demand' if result.demand_score >= 7 else 'Moderate Demand' if result.demand_score >= 4 else 'Low Demand' }}
+            </span>
+            <div class="score">{{ result.demand_score }}</div>
+            <p class="score-scale">out of 10</p>
+            <div class="score-meter" aria-hidden="true">
+                <div class="score-meter-fill score-meter-fill-{{ 'high' if result.demand_score >= 7 else 'medium' if result.demand_score >= 4 else 'low' }}" style="width: {{ result.demand_score * 10 }}%;"></div>
+            </div>
+            <p class="muted">{{ result.matched_review_count }} similar reviews analyzed</p>
+        </article>
+
+        <article class="result-card score-card score-card-secondary">
+            <p class="eyebrow">Success Score</p>
+            <span class="score-badge score-badge-{{ 'high' if result.success_score >= 7 else 'medium' if result.success_score >= 4 else 'low' }}">
+                {{ 'High Success' if result.success_score >= 7 else 'Moderate Success' if result.success_score >= 4 else 'Low Success' }}
+            </span>
+            <div class="score">{{ result.success_score }}</div>
+            <p class="score-scale">out of 10</p>
+            <div class="score-meter" aria-hidden="true">
+                <div class="score-meter-fill score-meter-fill-{{ 'high' if result.success_score >= 7 else 'medium' if result.success_score >= 4 else 'low' }}" style="width: {{ result.success_score * 10 }}%;"></div>
+            </div>
+            <p class="muted">Estimated from the sentiment balance of matching feedback</p>
+        </article>
+
+        <article class="result-card">
+            <p class="eyebrow">Prediction</p>
+            <h3>{{ result.product_name }}</h3>
+            <p>{{ result.prediction }}</p>
+            <p class="muted">{{ result.product_description }}</p>
+        </article>
+
+        <article class="result-card">
+            <p class="eyebrow">How To Read This</p>
+            <h3>Demand vs Success</h3>
+            <p><strong>Demand</strong> increases when many similar reviews show people actively care about the problem, even if they are complaining.</p>
+            <p><strong>Success</strong> increases when similar reviews are more positive, suggesting a better chance of user satisfaction.</p>
+        </article>
+    </div>
+
+    <section class="panel result-panel">
+        <div class="panel-heading">
+            <div>
+                <p class="eyebrow">Sentiment Breakdown</p>
+                <h2>How similar feedback is distributed</h2>
+            </div>
+        </div>
+
+        <div class="tag-list">
+            {% for item in result.sentiment_breakdown %}
+            <div class="trend-chip">
+                <strong>{{ item.label }}</strong>
+                <span>{{ item.count }} reviews • {{ item.percentage }}%</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if result.insights %}
+        <div class="panel-heading top-gap">
+            <div>
+                <p class="eyebrow">Insight Breakdown</p>
+                <h2>Matched market signals</h2>
+            </div>
+        </div>
+        <div class="insight-list">
+            {% for insight in result.insights %}
+            <article class="insight-card">{{ insight }}</article>
+            {% endfor %}
+        </div>
+
+        {% if result.sample_reviews %}
+        <div class="panel-heading top-gap">
+            <div>
+                <p class="eyebrow">Reference Feedback</p>
+                <h2>Most similar customer reviews</h2>
+            </div>
+        </div>
+        <div class="insight-list">
+            {% for review in result.sample_reviews %}
+            <article class="insight-card">
+                <strong>{{ review.sentiment }}</strong>
+                <span>{{ review.text }}</span>
+            </article>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="message">
+            No strong trend match was found for this description yet. You may get a better signal by mentioning target users, major features, or common pain points explicitly.
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | SignalScope{% endblock %}
+
+{% block content %}
+<section class="panel dashboard-header">
+    <div class="panel-heading">
+        <div>
+            <p class="eyebrow">Dataset Intelligence Dashboard</p>
+            <h1>Visual analysis built from the feedback dataset</h1>
+        </div>
+    </div>
+    <p class="hero-text">
+        This dashboard analyzes the labeled review dataset directly and converts customer sentiment patterns into demand and success score visualizations for apps and sectors.
+    </p>
+</section>
+
+{% if visualizations %}
+<section class="dashboard-grid">
+    {% for item in visualizations %}
+    <article class="chart-card">
+        <img src="{{ url_for('visualization_file', filename=item.filename) }}" alt="{{ item.title }}">
+        <div class="chart-copy">
+            <h2>{{ item.title }}</h2>
+            <p>{{ item.description }}</p>
+        </div>
+    </article>
+    {% endfor %}
+</section>
+{% else %}
+<section class="panel">
+    <div class="message">
+        The dataset visualizations could not be generated yet.
+    </div>
+</section>
+{% endif %}
+
+{% if top_apps %}
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <p class="eyebrow">Top Apps</p>
+            <h2>Highest scoring products in the dataset</h2>
+        </div>
+    </div>
+    <div class="table-list">
+        <div class="table-row table-row-header table-row-apps">
+            <span>App</span>
+            <span>Sector</span>
+            <span>Demand</span>
+            <span>Success</span>
+        </div>
+        {% for item in top_apps %}
+        <div class="table-row table-row-apps">
+            <strong>{{ item.app_id }}</strong>
+            <span>{{ item.sector }}</span>
+            <span>{{ item.demand_score }}</span>
+            <span>{{ item.success_score }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if top_sectors %}
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <p class="eyebrow">Top Sectors</p>
+            <h2>Best performing sectors from feedback</h2>
+        </div>
+    </div>
+    <div class="table-list">
+        <div class="table-row table-row-header table-row-sectors">
+            <span>Sector</span>
+            <span>Demand</span>
+            <span>Success</span>
+            <span>Reviews</span>
+        </div>
+        {% for item in top_sectors %}
+        <div class="table-row table-row-sectors">
+            <strong>{{ item.sector }}</strong>
+            <span>{{ item.demand_score }}</span>
+            <span>{{ item.success_score }}</span>
+            <span>{{ item.review_count }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if recent_products %}
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <p class="eyebrow">Recent Products</p>
+            <h2>Latest analyzed ideas</h2>
+        </div>
+    </div>
+    <div class="table-list">
+        <div class="table-row table-row-header table-row-recent">
+            <span>Product</span>
+            <span>Demand</span>
+            <span>Success</span>
+            <span>Created At</span>
+        </div>
+        {% for item in recent_products %}
+        <div class="table-row table-row-recent">
+            <strong>{{ item.product_name }}</strong>
+            <span>{{ item.demand_score }}</span>
+            <span>{{ item.success_score }}</span>
+            <span>{{ item.created_at }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}
